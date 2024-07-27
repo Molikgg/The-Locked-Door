@@ -1,0 +1,76 @@
+Console.Write("Enter Password To begin: ");
+string password = Console.ReadLine()!;
+Door door = new(password);
+door.SwitchdoorState();
+class Door
+{
+    private string Password { get; set; }
+    public Door(string password)
+    {
+        Password = password;
+    }
+    public void SwitchdoorState()
+    {
+        DoorState doorstate = DoorState.Open;
+
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Type -> 'Change Password' To Change the current Password!");
+        Console.ForegroundColor = ConsoleColor.White;
+
+        void CurrentDoorstate()
+        {
+            Console.Write("The Door State is ");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine(doorstate);
+            Console.ForegroundColor = ConsoleColor.White;
+            if (doorstate == DoorState.Lock)
+            {
+                Console.Write("Enter Password To Proceed:");
+            }
+            else Console.Write("Whats the next door state you want?: ");
+
+        }
+        CurrentDoorstate();
+        string input = Console.ReadLine()!.ToLower();
+
+        for (; ; )
+        {
+            if (input == "change password") { ChangePassword(); } // To make sure we can change our password
+
+            else if (input == "close" && doorstate == DoorState.Open) { doorstate = DoorState.Close; CurrentDoorstate(); }
+
+            else if (input == "open" && doorstate == DoorState.Close) { doorstate = DoorState.Open; CurrentDoorstate(); }
+            else if (input == "lock" && doorstate == DoorState.Close) { doorstate = DoorState.Lock; CurrentDoorstate(); }
+
+            else if (input == Password && doorstate == DoorState.Lock) { doorstate = DoorState.Unlock; CurrentDoorstate(); }
+            else if (input != Password && doorstate == DoorState.Lock) { Console.Write("Invalid Password:"); CurrentDoorstate(); } // To Check Password Entered Is Correct 
+
+            else if (input == "open" && doorstate == DoorState.Unlock) { doorstate = DoorState.Open; CurrentDoorstate(); }
+            else if (input == "lock" && doorstate == DoorState.Unlock) { doorstate = DoorState.Lock; CurrentDoorstate(); }
+
+            else Console.Write("Invalid State: \nWhats the next door state you want?:");
+
+            input = Console.ReadLine()!.ToLower(); // Make sure input is updated 
+        }
+    }
+    public void ChangePassword()
+    {
+        Console.Write("Enter the current password: ");
+        if (Console.ReadLine()! == Password)
+        {
+            Console.Write("Great Enter New Password: ");
+            Password = Console.ReadLine()!;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Wohoo Your Password Is Reseted");
+            Console.ForegroundColor = ConsoleColor.White;
+            Door door = new Door(Password);
+            door.SwitchdoorState();
+        }
+        else
+        {
+            Console.WriteLine("Incorrect password:");
+            Console.WriteLine("Type -> 'Change Password' To Try Again");
+        }
+    }
+}
+enum DoorState { Open, Close, Lock, Unlock };
